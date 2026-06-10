@@ -8,8 +8,7 @@
     'https://ydsycrawzkwadvwuqxsn.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkc3ljcmF3emt3YWR2d3VxeHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NzUzMDEsImV4cCI6MjA5NjQ1MTMwMX0.4fikPG9v4hO3JGaGn3RuFg_Y-RFTYaC_1DwzjAPjXls'
   )
-  // Test tanpa schema dulu — query jemuran yang sudah pasti jalan
-  const { data, error } = await sb.schema('portal').from('apps').select('*')
+  const { data, error } = await sb.from('apps').select('*')
   document.getElementById('out').textContent = JSON.stringify({ data, error }, null, 2)
 </script>
 </body>
