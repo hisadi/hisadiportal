@@ -318,14 +318,8 @@
     // ⚠️ GANTI dengan kredensial Supabase kamu
     const SUPABASE_URL = 'https://ydsycrawzkwadvwuqxsn.supabase.co'
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkc3ljcmF3emt3YWR2d3VxeHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NzUzMDEsImV4cCI6MjA5NjQ1MTMwMX0.4fikPG9v4hO3JGaGn3RuFg_Y-RFTYaC_1DwzjAPjXls'
-    
-    // Client utama untuk auth
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-    // Client untuk query data portal
-    const portalDb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      db: { schema: 'portal' }
-    })
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
     // ─── AUTH GUARD ──────────────────────────────────────────────────────────
     const { data: { session } } = await supabase.auth.getSession()
@@ -377,7 +371,7 @@
 
     async function insertApp(app) {
       const maxOrder = apps.length ? Math.max(...apps.map(a => a.sort_order ?? 0)) : 0
-      const { data, error } = await portalDb.from('apps').insert({
+      const { data, error } = await supabase.from('apps').insert({
         user_id: user.id,
         name: app.name, url: app.url, cat: app.cat,
         emoji: app.emoji, color: app.color,
@@ -388,20 +382,20 @@
     }
 
     async function updateApp(id, fields) {
-      const { error } = await portalDb.from('apps').update(fields).eq('id', id).eq('user_id', user.id)
+      const { error } = await supabase.from('apps').update(fields).eq('id', id).eq('user_id', user.id)
       if (error) { showToast('❌ Gagal mengupdate'); return false; }
       return true
     }
 
     async function deleteApp(id) {
-      const { error } = await portalDb.from('apps').delete().eq('id', id).eq('user_id', user.id)
+      const { error } = await supabase.from('apps').delete().eq('id', id).eq('user_id', user.id)
       if (error) { showToast('❌ Gagal menghapus'); return false; }
       return true
     }
 
     async function reorderApps(orderedIds) {
       await Promise.all(orderedIds.map((id, idx) =>
-        portalDb.from('apps').update({ sort_order: idx }).eq('id', id).eq('user_id', user.id)
+        supabase.from('apps').update({ sort_order: idx }).eq('id', id).eq('user_id', user.id)
       ))
     }
 
@@ -669,7 +663,7 @@
           if (!confirm(`Import ${imported.length} website? Data sekarang akan diganti.`)) return
 
           // Hapus semua data lama
-          await portalDb.from('apps').delete().eq('user_id', user.id)
+          await supabase.from('apps').delete().eq('user_id', user.id)
 
           // Insert data baru
           const toInsert = imported.map((a, idx) => ({
@@ -677,7 +671,7 @@
             cat: a.cat || 'kerja', emoji: a.emoji || '🌐',
             color: a.color ?? 0, sort_order: idx
           }))
-          const { data: inserted } = await portalDb.from('apps').insert(toInsert).select()
+          const { data: inserted } = await supabase.from('apps').insert(toInsert).select()
           apps = inserted || []
           render(); closeOverlay('overlay-io')
           showToast(`✅ ${apps.length} website berhasil diimport`)
