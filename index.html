@@ -251,11 +251,33 @@
       <div class="tab-row">
         <button class="tab-sm active" id="tab-preset" onclick="switchBgTab('preset')">Preset</button>
         <button class="tab-sm" id="tab-url" onclick="switchBgTab('url')">URL Gambar</button>
+        <button class="tab-sm" id="tab-auto" onclick="switchBgTab('auto')">🎲 Auto</button>
       </div>
       <div id="bg-panel-preset">
         <div class="bg-section-title">Warna & Gradient</div>
         <div class="preset-grid" id="preset-grid"></div>
         <button class="btn-modal" style="margin-top:1rem;width:100%;background:#ff4444;border-color:#aa0000;color:#fff;" id="btn-reset-bg">Reset ke default</button>
+      </div>
+      <div id="bg-panel-auto" style="display:none;">
+        <div style="text-align:center;padding:0.5rem 0 1rem;">
+          <div style="font-size:1.75rem;margin-bottom:0.5rem;">🎲</div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--text2);margin-bottom:1.25rem;">
+            Background anime random dari Nekos.best
+          </div>
+          <div class="field" style="text-align:left;margin-bottom:1rem;">
+            <label>Interval Ganti</label>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
+              <input type="range" id="auto-interval-slider" min="10" max="600" step="10" value="30"
+                style="flex:1;accent-color:var(--accent);"
+                oninput="updateIntervalLabel(this.value)" />
+              <span id="auto-interval-label" style="font-family:var(--font-mono);font-size:0.82rem;color:var(--text);min-width:50px;text-align:right;">30d</span>
+            </div>
+          </div>
+          <button class="btn-modal primary" id="btn-toggle-auto" onclick="toggleAutoMode()" style="width:100%;margin-bottom:0.75rem;">
+            ▶️ Aktifkan Auto Mode
+          </button>
+          <div id="auto-status" style="font-size:0.75rem;color:var(--text3);min-height:18px;"></div>
+        </div>
       </div>
       <div id="bg-panel-url" style="display:none;">
         <div class="field" style="margin-bottom:0.75rem;">
@@ -427,6 +449,57 @@
       await applyBg(`url("${url}")`)
     }
 
+    // ─── AUTO ANIME BG ───────────────────────────────────────────────────────
+    let autoTimer = null
+    let autoActive = false
+
+    function updateIntervalLabel(val) {
+      const v = parseInt(val)
+      const label = v < 60 ? `${v}d` : v < 3600 ? `${Math.round(v/60)}m` : `${Math.round(v/3600)}j`
+      document.getElementById('auto-interval-label').textContent = label
+    }
+
+    async function fetchAnimeBg() {
+      try {
+        const res = await fetch('https://nekos.best/api/v2/neko')
+        const data = await res.json()
+        const url = data.results?.[0]?.url
+        if (url) {
+          applyBgLocal(`url("${url}")`)
+          document.getElementById('auto-status').textContent = `🖼️ Diperbarui ${new Date().toLocaleTimeString('id-ID')}`
+        }
+      } catch {
+        document.getElementById('auto-status').textContent = '❌ Gagal ambil gambar'
+      }
+    }
+
+    function toggleAutoMode() {
+      const btn = document.getElementById('btn-toggle-auto')
+      const slider = document.getElementById('auto-interval-slider')
+      if (autoActive) {
+        // Matikan
+        clearInterval(autoTimer)
+        autoTimer = null
+        autoActive = false
+        btn.textContent = '▶️ Aktifkan Auto Mode'
+        btn.style.background = ''
+        document.getElementById('auto-status').textContent = '⏹️ Auto mode nonaktif'
+        slider.disabled = false
+        // Reset bg ke saved
+        loadBg()
+      } else {
+        // Aktifkan
+        autoActive = true
+        btn.textContent = '⏹️ Nonaktifkan Auto Mode'
+        btn.style.background = '#22c55e'
+        slider.disabled = true
+        const intervalMs = parseInt(slider.value) * 1000
+        fetchAnimeBg()
+        autoTimer = setInterval(fetchAnimeBg, intervalMs)
+        document.getElementById('auto-status').textContent = `✅ Aktif · ganti tiap ${slider.value}d`
+      }
+    }
+
     function buildPresetGrid() {
       const pg = document.getElementById('preset-grid')
       pg.innerHTML = PRESETS.map(p => `
@@ -440,8 +513,10 @@
       bgTab = tab
       document.getElementById('tab-preset').classList.toggle('active', tab === 'preset')
       document.getElementById('tab-url').classList.toggle('active', tab === 'url')
+      document.getElementById('tab-auto').classList.toggle('active', tab === 'auto')
       document.getElementById('bg-panel-preset').style.display = tab === 'preset' ? '' : 'none'
       document.getElementById('bg-panel-url').style.display = tab === 'url' ? '' : 'none'
+      document.getElementById('bg-panel-auto').style.display = tab === 'auto' ? '' : 'none'
     }
 
     document.getElementById('btn-reset-bg').addEventListener('click', () => applyBg('none'))
