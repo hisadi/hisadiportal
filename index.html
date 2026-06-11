@@ -249,24 +249,16 @@
     <div class="modal" style="max-width:440px;">
       <h2>Atur Background 🖼️</h2>
       <div class="tab-row">
-        <button class="tab-sm active" onclick="switchBgTab('preset')">Preset</button>
-        <button class="tab-sm" onclick="switchBgTab('upload')">Upload</button>
-        <button class="tab-sm" onclick="switchBgTab('url')">URL</button>
+        <button class="tab-sm active" id="tab-preset" onclick="switchBgTab('preset')">Preset</button>
+        <button class="tab-sm" id="tab-url" onclick="switchBgTab('url')">URL Gambar</button>
       </div>
       <div id="bg-panel-preset">
         <div class="bg-section-title">Warna & Gradient</div>
         <div class="preset-grid" id="preset-grid"></div>
         <button class="btn-modal" style="margin-top:1rem;width:100%;background:#ff4444;border-color:#aa0000;color:#fff;" id="btn-reset-bg">Reset ke default</button>
       </div>
-      <div id="bg-panel-upload" style="display:none;">
-        <div class="upload-area" onclick="document.getElementById('file-input').click()">
-          📁 Klik untuk pilih gambar<br/><span style="font-size:0.75rem;opacity:0.7">JPG, PNG, WebP — maks 5MB</span>
-          <input type="file" id="file-input" accept="image/*" style="display:none;" />
-        </div>
-        <div id="upload-preview" style="margin-top:10px;"></div>
-      </div>
       <div id="bg-panel-url" style="display:none;">
-        <div class="field" style="margin-bottom:0.5rem;">
+        <div class="field" style="margin-bottom:0.75rem;">
           <label>URL Gambar</label>
           <input type="url" id="inp-bg-url" placeholder="https://..." />
         </div>
@@ -400,31 +392,40 @@
     }
 
     // ─── BG ──────────────────────────────────────────────────────────────────
-    function loadBg() {
-      const saved = localStorage.getItem('myportal_bg')
-      if (saved && saved !== 'none') {
-        document.documentElement.style.setProperty('--custom-bg', saved)
-        document.body.classList.add('has-bg')
-      }
+    async function loadBg() {
+      const { data } = await supabase
+        .from('portal_settings')
+        .select('bg_value')
+        .eq('user_id', user.id)
+        .single()
+      if (data?.bg_value) applyBgLocal(data.bg_value)
     }
-    function applyBg(value) {
+
+    function applyBgLocal(value) {
       if (!value || value === 'none') {
         document.body.classList.remove('has-bg')
         document.documentElement.style.removeProperty('--custom-bg')
-        localStorage.removeItem('myportal_bg')
       } else {
         document.documentElement.style.setProperty('--custom-bg', value)
         document.body.classList.add('has-bg')
-        localStorage.setItem('myportal_bg', value)
       }
+    }
+
+    async function applyBg(value) {
+      applyBgLocal(value)
+      await supabase.from('portal_settings').upsert({
+        user_id: user.id,
+        bg_value: value || 'none',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' })
       showToast('✅ Background diterapkan')
     }
-    function applyBgUrl() {
+
+    async function applyBgUrl() {
       const url = document.getElementById('inp-bg-url').value.trim()
       if (!url) { showToast('❌ URL kosong'); return; }
-      applyBg(`url("${url}")`)
+      await applyBg(`url("${url}")`)
     }
-    loadBg()
 
     function buildPresetGrid() {
       const pg = document.getElementById('preset-grid')
@@ -437,25 +438,12 @@
     let bgTab = 'preset'
     function switchBgTab(tab) {
       bgTab = tab
-      document.querySelectorAll('#overlay-bg .tab-sm').forEach((t,i) => {
-        t.classList.toggle('active', ['preset','upload','url'][i] === tab)
-      })
-      document.getElementById('bg-panel-preset').style.display = tab==='preset'?'':'none'
-      document.getElementById('bg-panel-upload').style.display = tab==='upload'?'':'none'
-      document.getElementById('bg-panel-url').style.display = tab==='url'?'':'none'
+      document.getElementById('tab-preset').classList.toggle('active', tab === 'preset')
+      document.getElementById('tab-url').classList.toggle('active', tab === 'url')
+      document.getElementById('bg-panel-preset').style.display = tab === 'preset' ? '' : 'none'
+      document.getElementById('bg-panel-url').style.display = tab === 'url' ? '' : 'none'
     }
 
-    document.getElementById('file-input').addEventListener('change', e => {
-      const file = e.target.files[0]; if (!file) return
-      if (file.size > 5*1024*1024) { showToast('❌ File terlalu besar (maks 5MB)'); return; }
-      const reader = new FileReader()
-      reader.onload = ev => {
-        const dataUrl = ev.target.result
-        document.getElementById('upload-preview').innerHTML = `<img src="${dataUrl}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover;" />`
-        applyBg(`url("${dataUrl}")`)
-      }
-      reader.readAsDataURL(file)
-    })
     document.getElementById('btn-reset-bg').addEventListener('click', () => applyBg('none'))
 
     // ─── CLOCK ───────────────────────────────────────────────────────────────
@@ -747,6 +735,7 @@
     // ─── INIT ────────────────────────────────────────────────────────────────
     document.getElementById('greeting-sub').textContent = `Login sebagai ${user.email} 👋`
     fetchApps()
+    loadBg()
   </script>
 </body>
 </html>
