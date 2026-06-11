@@ -28,7 +28,7 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:var(--font-body);background:var(--bg);background-image:var(--stripe);color:var(--text);min-height:100vh;padding:0 0 4rem;transition:background 0.3s;}
     body.has-bg{background-image:none!important;}
-    body.has-bg::before{content:'';position:fixed;inset:0;z-index:-1;background:var(--custom-bg) center/cover no-repeat;}
+    body.has-bg::before{content:'';position:fixed;inset:0;z-index:-1;background:var(--custom-bg) top center/contain no-repeat;background-color:#0a0a0a;}
     body.has-bg .header{background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border-bottom-color:rgba(255,255,255,0.1);}
     body.has-bg .main{background:rgba(0,0,0,0.25);border-radius:16px;margin-top:1rem;backdrop-filter:blur(2px);}
     body.has-bg .card{background:rgba(255,255,255,0.15)!important;backdrop-filter:blur(6px);border-color:rgba(255,255,255,0.25);color:#fff;}
@@ -417,11 +417,24 @@
     async function loadBg() {
       const { data } = await supabase
         .from('portal_settings')
-        .select('bg_value')
+        .select('bg_value, bg_mode')
         .eq('user_id', user.id)
         .single()
-      if (data?.bg_value) applyBgLocal(data.bg_value)
+      if (!data) return
+      if (data.bg_value) applyBgLocal(data.bg_value)
+      if (data.bg_mode === 'auto') {
+        // Aktifkan auto mode
+        const slider = document.getElementById('auto-interval-slider')
+        const intervalMs = parseInt(slider.value) * 1000
+        autoActive = true
+        document.getElementById('btn-toggle-auto').textContent = '⏹️ Nonaktifkan Auto Mode'
+        document.getElementById('btn-toggle-auto').style.background = '#22c55e'
+        slider.disabled = true
+        fetchAnimeBg()
+        autoTimer = setInterval(fetchAnimeBg, intervalMs)
+      }
     }
+  
 
     function applyBgLocal(value) {
       if (!value || value === 'none') {
@@ -433,11 +446,12 @@
       }
     }
 
-    async function applyBg(value) {
+    async function applyBg(value, mode = 'preset') {
       applyBgLocal(value)
       await supabase.from('portal_settings').upsert({
         user_id: user.id,
         bg_value: value || 'none',
+        bg_mode: mode,
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id' })
       showToast('✅ Background diterapkan')
@@ -446,7 +460,7 @@
     async function applyBgUrl() {
       const url = document.getElementById('inp-bg-url').value.trim()
       if (!url) { showToast('❌ URL kosong'); return; }
-      await applyBg(`url("${url}")`)
+      await applyBg(`url("${url}")`, 'url')
     }
 
     // ─── AUTO ANIME BG ───────────────────────────────────────────────────────
@@ -461,11 +475,18 @@
 
     async function fetchAnimeBg() {
       try {
-        const res = await fetch('https://nekos.best/api/v2/neko')
+        const res = await fetch('https://nekos.best/api/v2/hug')
         const data = await res.json()
         const url = data.results?.[0]?.url
         if (url) {
-          applyBgLocal(`url("${url}")`)
+          const value = `url("${url}")`
+          applyBgLocal(value)
+          await supabase.from('portal_settings').upsert({
+            user_id: user.id,
+            bg_value: value,
+            bg_mode: 'auto',
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'user_id' })
           document.getElementById('auto-status').textContent = `🖼️ Diperbarui ${new Date().toLocaleTimeString('id-ID')}`
         }
       } catch {
