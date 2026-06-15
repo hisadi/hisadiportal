@@ -29,8 +29,8 @@
     body{font-family:var(--font-body);background:var(--bg);background-image:var(--stripe);color:var(--text);min-height:100vh;padding:0 0 4rem;transition:background 0.3s;}
     body.has-bg{background-image:none!important;}
     body.has-bg::before{content:'';position:fixed;inset:0;z-index:-1;background:var(--custom-bg) top center/contain no-repeat;background-color:#0a0a0a;}
-    body.has-bg .header{background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border-bottom-color:rgba(255,255,255,0.1);}
-    body.has-bg .main{background:rgba(0,0,0,0.25);border-radius:16px;margin-top:1rem;backdrop-filter:blur(2px);}
+    body.has-bg .header{background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border-bottom-color:rgba(255,255,255,0.1);position:relative; z-index:2;;}
+    body.has-bg .main{background:rgba(0,0,0,0.25);border-radius:16px;margin-top:1rem;backdrop-filter:blur(2px);position:relative; z-index:2;}
     body.has-bg .card{background:rgba(255,255,255,0.15)!important;backdrop-filter:blur(6px);border-color:rgba(255,255,255,0.25);color:#fff;}
     body.has-bg .card-name{color:#fff;}
     body.has-bg .card-url{color:rgba(255,255,255,0.7);}
@@ -165,6 +165,7 @@
   </style>
 </head>
 <body>
+  <canvas id="gl-canvas" style="position:fixed;inset:0;z-index:1;pointer-events:none;width:100%;height:100%;"></canvas>
 
   <header class="header">
     <div class="logo">🚀 MyPortal</div>
@@ -834,6 +835,66 @@
     document.getElementById('greeting-sub').textContent = `Login sebagai ${user.email} 👋`
     fetchApps()
     loadBg()
+  </script>
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.160.0'
+
+    const canvas = document.getElementById('gl-canvas')
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true })
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
+    camera.position.z = 5
+
+    // Particle field
+    const PARTICLE_COUNT = 120
+    const positions = new Float32Array(PARTICLE_COUNT * 3)
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      positions[i * 3]     = (Math.random() - 0.5) * 10
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 10
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 5
+    }
+
+    const geometry = new THREE.BufferGeometry()
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+
+    const material = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.035,
+      transparent: true,
+      opacity: 0.35,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    })
+
+    const particles = new THREE.Points(geometry, material)
+    scene.add(particles)
+
+    // Mouse interaction
+    let mouseX = 0, mouseY = 0
+    document.addEventListener('mousemove', e => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2
+    })
+
+    function animate() {
+      requestAnimationFrame(animate)
+      particles.rotation.y += 0.0006
+      particles.rotation.x += 0.0002
+      camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02
+      camera.position.y += (-mouseY * 0.3 - camera.position.y) * 0.02
+      camera.lookAt(scene.position)
+      renderer.render(scene, camera)
+    }
+    animate()
+
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+    })
   </script>
 </body>
 </html>
