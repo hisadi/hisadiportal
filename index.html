@@ -3,309 +3,486 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyPortal 🚀</title>
+  <meta name="description" content="MyPortal — portal pribadi untuk menyimpan dan membuka website favorit dengan cepat." />
+  <title>MyPortal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:#fdf6e3;--bg2:#fff8ed;--card-bg:#ffffff;--border:#e8d5a3;
-      --text:#3d2b00;--text2:#7a5c1e;--text3:#b08040;
-      --accent:#ff6b35;--accent2:#ffc947;
-      --shadow:4px 4px 0px #e8d5a3;--shadow-hover:6px 6px 0px #d4b870;
-      --font-display:'Fredoka One',cursive;--font-body:'Nunito',sans-serif;
-      --radius:14px;
-      --stripe:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(255,107,53,0.06) 6px,rgba(255,107,53,0.06) 12px);
+      /* Brand */
+      --bg:#fffbf2; --bg2:#fff4e0; --card-bg:#ffffff;
+      --border:#1a1a1a; --border-soft:#ebe0c6;
+      --text:#1a1a1a; --text2:#5a5040; --text3:#8a7e6a;
+      --accent:#ff5722; --accent-2:#ffc107; --accent-soft:#fff0e6;
+      --success:#22c55e; --danger:#ef4444;
+      --shadow:3px 3px 0 var(--border);
+      --shadow-hover:5px 5px 0 var(--border);
+      --shadow-press:1px 1px 0 var(--border);
+      --font-display:'Space Grotesk', system-ui, sans-serif;
+      --font-body:'Inter', system-ui, -apple-system, sans-serif;
+      --radius:12px; --radius-sm:8px;
+      --transition:160ms cubic-bezier(.4,0,.2,1);
     }
     @media(prefers-color-scheme:dark){
       :root{
-        --bg:#1a1209;--bg2:#221800;--card-bg:#2a1f0a;--border:#4a3510;
-        --text:#f5e6c8;--text2:#c8a96e;--text3:#8a6d3a;
-        --shadow:4px 4px 0px #4a3510;--shadow-hover:6px 6px 0px #6a4d18;
-        --stripe:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(255,107,53,0.04) 6px,rgba(255,107,53,0.04) 12px);
+        --bg:#13110d; --bg2:#1c1812; --card-bg:#221d14;
+        --border:#f5e6c8; --border-soft:#3a3122;
+        --text:#f5e6c8; --text2:#c8b88e; --text3:#8a7a52;
+        --accent:#ff7043; --accent-2:#ffd54f; --accent-soft:#2a1a10;
+        --shadow:3px 3px 0 var(--border);
+        --shadow-hover:5px 5px 0 var(--border);
       }
     }
+
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:var(--font-body);background:var(--bg);background-image:var(--stripe);color:var(--text);min-height:100vh;padding:0 0 4rem;transition:background 0.3s;}
+    html{-webkit-text-size-adjust:100%;}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:4rem;line-height:1.5;font-feature-settings:"cv11","ss01";transition:background var(--transition), color var(--transition);}
+
+    /* BG patterns */
+    body:not(.has-bg){background-image:radial-gradient(circle at 1px 1px, rgba(26,26,26,0.05) 1px, transparent 0);background-size:24px 24px;}
     body.has-bg{background-image:none!important;}
-    body.has-bg::before{content:'';position:fixed;inset:0;z-index:-1;background:var(--custom-bg) top center/contain no-repeat;background-color:#0a0a0a;}
-    body.has-bg .header{background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border-bottom-color:rgba(255,255,255,0.1);position:relative; z-index:2;;}
-    body.has-bg .main{background:rgba(0,0,0,0.25);border-radius:16px;margin-top:1rem;backdrop-filter:blur(2px);position:relative; z-index:2;}
-    body.has-bg .card{background:rgba(255,255,255,0.15)!important;backdrop-filter:blur(6px);border-color:rgba(255,255,255,0.25);color:#fff;}
-    body.has-bg .card-name{color:#fff;}
-    body.has-bg .card-url{color:rgba(255,255,255,0.7);}
-    body.has-bg .search-input{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;backdrop-filter:blur(6px);}
-    body.has-bg .search-input::placeholder{color:rgba(255,255,255,0.6);}
-    body.has-bg .tab{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;}
-    body.has-bg .tab.active{background:var(--accent);border-color:#fff;color:#fff;}
-    body.has-bg .add-card{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);}
-    body.has-bg .count-label{color:rgba(255,255,255,0.6);}
-    body.has-bg .greeting h1,body.has-bg .greeting p{color:#fff;}
-    body.focus-mode .header{transform:translateY(-100%);transition:transform 0.3s;}
-    body.focus-mode .main{padding-top:0.5rem;}
-    body.focus-mode .greeting{display:none;}
+    body.has-bg::before{content:'';position:fixed;inset:0;z-index:-1;background:var(--custom-bg) top center/cover no-repeat;background-color:#0a0a0a;}
+    body.has-bg::after{content:'';position:fixed;inset:0;z-index:-1;background:rgba(0,0,0,0.35);}
 
-    /* HEADER */
-    .header{background:var(--accent);border-bottom:3px solid var(--text);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;transition:transform 0.3s,background 0.3s;}
-    .logo{font-family:var(--font-display);font-size:1.8rem;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,0.2);}
-    .header-right{display:flex;align-items:center;gap:1rem;}
-    .clock-widget{text-align:right;color:#fff;}
-    .clock-widget .time{font-family:var(--font-display);font-size:1.5rem;line-height:1;text-shadow:2px 2px 0 rgba(0,0,0,0.2);}
-    .clock-widget .date{font-size:0.75rem;opacity:0.85;font-weight:600;}
-    .hdr-btn{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);border-radius:10px;padding:6px 10px;color:#fff;cursor:pointer;font-size:1rem;transition:background 0.15s;line-height:1;position:relative;}
-    .hdr-btn:hover{background:rgba(255,255,255,0.3);}
-    .user-email{font-size:0.7rem;color:rgba(255,255,255,0.7);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}
+    }
 
-    /* MAIN */
-    .main{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
-    .greeting{margin-bottom:1.75rem;}
-    .greeting h1{font-family:var(--font-display);font-size:2rem;color:var(--text);}
-    .greeting p{color:var(--text2);font-size:0.95rem;margin-top:4px;font-weight:600;}
+    /* Focus ring (visible for keyboard nav) */
+    *:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px;}
 
-    /* SEARCH */
-    .search-wrap{position:relative;margin-bottom:1.25rem;}
-    .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);width:18px;height:18px;}
-    .search-input{width:100%;padding:12px 14px 12px 42px;font-family:var(--font-body);font-size:0.95rem;font-weight:600;background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);color:var(--text);outline:none;box-shadow:var(--shadow);transition:box-shadow 0.15s,border-color 0.15s;}
+    /* ─── HEADER ─────────────────────────────────────── */
+    .header{background:var(--bg);border-bottom:2.5px solid var(--border);padding:0.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:1rem;backdrop-filter:blur(12px);background:color-mix(in srgb, var(--bg) 85%, transparent);}
+    .logo{display:flex;align-items:center;gap:0.5rem;font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;}
+    .logo-mark{width:32px;height:32px;background:var(--accent);border:2.5px solid var(--border);border-radius:8px;display:grid;place-items:center;box-shadow:var(--shadow);}
+    .logo-mark svg{width:18px;height:18px;color:var(--text);}
+
+    .header-right{display:flex;align-items:center;gap:0.5rem;}
+    .clock-widget{text-align:right;color:var(--text2);line-height:1;margin-right:0.5rem;}
+    .clock-widget .time{font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
+    .clock-widget .date{font-size:0.7rem;font-weight:500;margin-top:2px;color:var(--text3);}
+
+    .hdr-btn{display:inline-flex;align-items:center;justify-content:center;background:var(--card-bg);border:2.5px solid var(--border);border-radius:10px;width:40px;height:40px;color:var(--text);cursor:pointer;transition:transform var(--transition),box-shadow var(--transition);box-shadow:var(--shadow);position:relative;}
+    .hdr-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow-hover);}
+    .hdr-btn:active{transform:translate(2px,2px);box-shadow:var(--shadow-press);}
+    .hdr-btn svg{width:18px;height:18px;}
+    .hdr-btn .badge{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;font-size:0.6rem;font-weight:700;padding:1px 4px;border-radius:6px;border:1.5px solid var(--border);}
+
+    .user-pill{display:flex;align-items:center;gap:0.5rem;padding:6px 12px 6px 6px;background:var(--card-bg);border:2.5px solid var(--border);border-radius:999px;font-size:0.75rem;font-weight:600;color:var(--text);box-shadow:var(--shadow);max-width:160px;}
+    .user-pill .avatar{width:24px;height:24px;border-radius:50%;background:var(--accent-2);border:2px solid var(--border);display:grid;place-items:center;font-size:0.7rem;font-weight:700;flex-shrink:0;}
+    .user-pill .email{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+    /* ─── MAIN ─────────────────────────────────────── */
+    .main{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 2rem;}
+    .greeting{margin-bottom:1.5rem;}
+    .greeting h1{font-family:var(--font-display);font-size:clamp(1.5rem, 4vw, 2rem);font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1.2;}
+    .greeting p{color:var(--text2);font-size:0.9rem;margin-top:4px;font-weight:500;}
+
+    /* ─── SEARCH ───────────────────────────────────── */
+    .search-wrap{position:relative;margin-bottom:1rem;}
+    .search-wrap > svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);width:18px;height:18px;pointer-events:none;}
+    .search-kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--bg2);border:1.5px solid var(--border-soft);border-radius:6px;padding:2px 7px;font-size:0.7rem;font-weight:600;color:var(--text3);font-family:var(--font-body);pointer-events:none;}
+    .search-input{width:100%;padding:11px 56px 11px 42px;font-family:var(--font-body);font-size:0.95rem;font-weight:500;background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);color:var(--text);outline:none;box-shadow:var(--shadow);transition:box-shadow var(--transition),transform var(--transition);}
     .search-input::placeholder{color:var(--text3);}
     .search-input:focus{border-color:var(--accent);box-shadow:var(--shadow-hover);}
 
-    /* TABS */
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;}
-    .tab{font-family:var(--font-body);font-size:0.8rem;font-weight:700;padding:6px 14px;border-radius:999px;border:2px solid var(--border);background:var(--card-bg);color:var(--text2);cursor:pointer;transition:all 0.15s;box-shadow:2px 2px 0 var(--border);}
-    .tab:hover{border-color:var(--accent);color:var(--accent);}
-    .tab.active{background:var(--accent);border-color:var(--text);color:#fff;box-shadow:3px 3px 0 var(--text);}
+    /* ─── TABS ─────────────────────────────────────── */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center;}
+    .tab{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;padding:6px 12px;border-radius:999px;border:2.5px solid var(--border);background:var(--card-bg);color:var(--text2);cursor:pointer;transition:transform var(--transition),box-shadow var(--transition),background var(--transition),color var(--transition);box-shadow:var(--shadow);user-select:none;}
+    .tab:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow-hover);color:var(--text);}
+    .tab:active{transform:translate(1.5px,1.5px);box-shadow:var(--shadow-press);}
+    .tab.active{background:var(--accent);color:#fff;box-shadow:var(--shadow-hover);}
+    .tab .dot{width:8px;height:8px;border-radius:50%;background:var(--text3);}
+    .tab.active .dot{background:#fff;}
+    .tab[data-cat="kerja"] .dot{background:#3b82f6;}
+    .tab[data-cat="sosial"] .dot{background:#ec4899;}
+    .tab[data-cat="hiburan"] .dot{background:#8b5cf6;}
+    .tab[data-cat="referensi"] .dot{background:#10b981;}
+    .tab[data-cat="belanja"] .dot{background:#f59e0b;}
+    .tab .count{display:inline-block;background:rgba(0,0,0,0.08);font-size:0.7rem;padding:1px 6px;border-radius:8px;font-weight:700;min-width:18px;text-align:center;}
+    .tab.active .count{background:rgba(255,255,255,0.25);}
 
-    /* COUNT */
-    .count-label{font-size:0.75rem;font-weight:700;color:var(--text3);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em;}
+    /* ─── COUNT ────────────────────────────────────── */
+    .count-label{font-size:0.72rem;font-weight:700;color:var(--text3);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;gap:0.5rem;}
+    .count-label::before{content:'';flex:1;height:1.5px;background:var(--border-soft);}
 
-    /* GRID */
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+    /* ─── GRID ─────────────────────────────────────── */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;}
 
-    /* CARD */
-    .card{background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);padding:1.1rem 1rem;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow 0.15s,transform 0.15s;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;user-select:none;}
-    .card:hover{box-shadow:var(--shadow-hover);transform:translate(-1px,-1px);}
-    .card.dragging{opacity:0.45;transform:scale(0.96);}
-    .card.drag-over{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent2);}
-    .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid rgba(0,0,0,0.08);flex-shrink:0;overflow:hidden;}
-    .card-icon img{width:28px;height:28px;object-fit:contain;}
-    .card-name{font-weight:700;font-size:0.88rem;color:var(--text);line-height:1.2;}
-    .card-url{font-size:0.72rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
-    .card-actions{position:absolute;top:6px;right:6px;display:flex;gap:4px;opacity:0;transition:opacity 0.1s;}
-    .card:hover .card-actions{opacity:1;}
-    .card-btn{background:var(--bg2);border:1.5px solid var(--border);border-radius:6px;padding:3px 5px;font-size:0.7rem;cursor:pointer;color:var(--text2);line-height:1;transition:all 0.1s;}
-    .card-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
-    .card-btn.del:hover{background:#ff4444;color:#fff;border-color:#ff4444;}
-    .drag-handle{position:absolute;bottom:6px;right:8px;font-size:0.65rem;color:var(--text3);opacity:0;transition:opacity 0.1s;cursor:grab;}
+    /* ─── CARD ─────────────────────────────────────── */
+    .card{background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);padding:0.875rem;cursor:pointer;box-shadow:var(--shadow);transition:transform var(--transition),box-shadow var(--transition);position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:0.625rem;user-select:none;text-align:left;color:inherit;font:inherit;min-height:120px;outline:none;}
+    .card:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow-hover);}
+    .card:active{transform:translate(2px,2px);box-shadow:var(--shadow-press);}
+    .card.dragging{opacity:0.4;transform:scale(0.96);cursor:grabbing;}
+    .card.drag-over{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-2),var(--shadow);}
+    .card:focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+
+    .card-head{display:flex;align-items:center;justify-content:space-between;width:100%;}
+    .card-icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;border:2.5px solid var(--border);flex-shrink:0;background:rgba(255,255,255,0.4);overflow:hidden;position:relative;}
+    .card-icon img{width:24px;height:24px;object-fit:contain;display:block;}
+    .card-icon .placeholder{font-family:var(--font-display);font-weight:700;font-size:1.1rem;color:var(--text);text-transform:uppercase;}
+
+    .card-actions{display:flex;gap:4px;}
+    .card-btn{background:var(--card-bg);border:1.5px solid var(--border-soft);border-radius:6px;padding:4px;cursor:pointer;color:var(--text3);line-height:0;transition:all var(--transition);display:inline-flex;align-items:center;justify-content:center;}
+    .card-btn:hover{background:var(--text);color:var(--bg);border-color:var(--text);}
+    .card-btn.del:hover{background:var(--danger);color:#fff;border-color:var(--danger);}
+    .card-btn svg{width:13px;height:13px;}
+
+    .card-body{flex:1;width:100%;min-width:0;}
+    .card-name{font-weight:600;font-size:0.85rem;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;}
+    .card-url{font-size:0.7rem;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
+
+    .card-cat{position:absolute;top:8px;right:8px;display:none;}
+    .card-meta{display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text3);font-weight:500;}
+
+    .drag-handle{position:absolute;bottom:6px;right:8px;font-size:0.7rem;color:var(--text3);opacity:0.4;transition:opacity var(--transition);pointer-events:none;}
     .card:hover .drag-handle{opacity:1;}
 
-    /* ADD CARD */
-    .add-card{background:transparent;border:2.5px dashed var(--border);border-radius:var(--radius);padding:1.1rem 1rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:120px;color:var(--text3);font-weight:700;font-size:0.85rem;transition:all 0.15s;}
-    .add-card:hover{border-color:var(--accent);color:var(--accent);background:rgba(255,107,53,0.05);}
-    .add-card .plus{font-size:1.8rem;line-height:1;}
-
-    /* SKELETON */
-    .skeleton{background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);padding:1.1rem 1rem;display:flex;flex-direction:column;gap:10px;min-height:120px;}
-    .skel-box{background:var(--border);border-radius:8px;animation:pulse 1.2s ease-in-out infinite alternate;}
-    @keyframes pulse{from{opacity:0.5;}to{opacity:1;}}
-
-    /* TOAST */
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--bg);font-weight:700;font-size:0.88rem;padding:10px 20px;border-radius:999px;transition:transform 0.3s;z-index:500;white-space:nowrap;}
-    .toast.show{transform:translateX(-50%) translateY(0);}
-
-    /* SHORTCUT HINT */
-    .shortcut-hint{position:fixed;bottom:2rem;right:2rem;background:var(--card-bg);border:2px solid var(--border);border-radius:12px;padding:1rem 1.25rem;box-shadow:var(--shadow);font-size:0.8rem;color:var(--text2);z-index:400;display:none;min-width:200px;}
-    .shortcut-hint.show{display:block;}
-    .shortcut-hint h4{font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.6rem;}
-    .shortcut-row{display:flex;justify-content:space-between;gap:1rem;padding:3px 0;}
-    kbd{background:var(--bg2);border:1.5px solid var(--border);border-radius:5px;padding:1px 6px;font-size:0.75rem;font-family:monospace;color:var(--text);}
-
-    /* MODAL */
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem;overflow-y:auto;}
-    .overlay.open{display:flex;}
-    .modal{background:var(--card-bg);border:3px solid var(--text);border-radius:20px;padding:1.75rem;width:100%;max-width:400px;box-shadow:8px 8px 0 var(--text);animation:popIn 0.2s ease;}
-    @keyframes popIn{from{transform:scale(0.9);opacity:0;}to{transform:scale(1);opacity:1;}}
-    .modal h2{font-family:var(--font-display);font-size:1.4rem;color:var(--text);margin-bottom:1.25rem;}
-    .field{margin-bottom:1rem;}
-    .field label{display:block;font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;}
-    .field input,.field select{width:100%;padding:9px 12px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);outline:none;transition:border-color 0.15s;}
-    .field input:focus,.field select:focus{border-color:var(--accent);}
-    .emoji-grid{display:flex;flex-wrap:wrap;gap:8px;}
-    .emoji-opt{width:42px;height:42px;border-radius:10px;border:2px solid var(--border);background:var(--bg);font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.1s;}
-    .emoji-opt:hover{border-color:var(--accent);transform:scale(1.1);}
-    .emoji-opt.selected{border-color:var(--accent);background:rgba(255,107,53,0.12);box-shadow:2px 2px 0 var(--accent);}
-    .color-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
-    .color-opt{width:28px;height:28px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;transition:transform 0.1s,border-color 0.1s;}
-    .color-opt:hover{transform:scale(1.15);}
-    .color-opt.selected{border-color:var(--text);transform:scale(1.15);}
-    .modal-actions{display:flex;gap:10px;margin-top:1.5rem;justify-content:flex-end;}
-    .btn-modal{font-family:var(--font-body);font-size:0.88rem;font-weight:700;padding:9px 20px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;transition:all 0.15s;box-shadow:3px 3px 0 var(--border);}
-    .btn-modal:hover{box-shadow:4px 4px 0 var(--border);transform:translate(-1px,-1px);}
-    .btn-modal.primary{background:var(--accent);border-color:var(--text);color:#fff;box-shadow:3px 3px 0 var(--text);}
-    .btn-modal.primary:hover{box-shadow:5px 5px 0 var(--text);}
-    .btn-modal:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-
-    /* BG SETTINGS */
-    .preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
-    .preset-swatch{width:100%;aspect-ratio:1.6;border-radius:8px;border:2.5px solid transparent;cursor:pointer;transition:all 0.15s;}
-    .preset-swatch:hover,.preset-swatch.selected{border-color:var(--text);transform:scale(1.05);}
-    .bg-section-title{font-size:0.78rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
-    .upload-area{border:2px dashed var(--border);border-radius:10px;padding:1.25rem;text-align:center;cursor:pointer;color:var(--text3);font-weight:600;font-size:0.85rem;transition:all 0.15s;}
-    .upload-area:hover{border-color:var(--accent);color:var(--accent);}
-    .tab-row{display:flex;gap:6px;margin-bottom:1rem;}
-    .tab-sm{padding:5px 12px;border-radius:999px;border:2px solid var(--border);background:var(--bg);color:var(--text2);font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s;}
-    .tab-sm.active{background:var(--accent);border-color:var(--text);color:#fff;}
-
-    @media(max-width:480px){
-      .header{padding:0.75rem 1rem;}
-      .logo{font-size:1.4rem;}
-      .main{padding:1.25rem 1rem;}
-      .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
-      .user-email{display:none;}
+    /* Touch: keep actions visible on tap */
+    @media (hover: none){
+      .card-actions{opacity:1;}
+      .card-btn{background:rgba(0,0,0,0.04);border-color:transparent;}
     }
+
+    /* ─── ADD CARD ─────────────────────────────────── */
+    .add-card{background:transparent;border:2.5px dashed var(--border-soft);border-radius:var(--radius);padding:0.875rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:120px;color:var(--text3);font-weight:600;font-size:0.8rem;transition:transform var(--transition),border-color var(--transition),color var(--transition),background var(--transition);box-shadow:none;}
+    .add-card:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);transform:translate(-1px,-1px);}
+    .add-card:active{transform:translate(1.5px,1.5px);}
+    .add-card .plus{width:36px;height:36px;border-radius:50%;border:2.5px solid currentColor;display:grid;place-items:center;transition:transform var(--transition);}
+    .add-card:hover .plus{transform:rotate(90deg);}
+    .add-card .plus svg{width:18px;height:18px;}
+
+    /* ─── EMPTY STATE ──────────────────────────────── */
+    .empty-state{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--text3);}
+    .empty-state .icon{width:64px;height:64px;margin:0 auto 1rem;background:var(--card-bg);border:2.5px dashed var(--border-soft);border-radius:50%;display:grid;place-items:center;color:var(--text3);}
+    .empty-state h3{font-family:var(--font-display);font-size:1.1rem;color:var(--text);margin-bottom:0.25rem;}
+    .empty-state p{font-size:0.85rem;}
+
+    /* ─── SKELETON ─────────────────────────────────── */
+    .skeleton{background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);padding:0.875rem;display:flex;flex-direction:column;gap:0.625rem;min-height:120px;box-shadow:var(--shadow);}
+    .skel-box{background:linear-gradient(90deg, var(--border-soft) 0%, color-mix(in srgb, var(--border-soft) 60%, var(--bg)) 50%, var(--border-soft) 100%);background-size:200% 100%;border-radius:6px;animation:shimmer 1.4s ease-in-out infinite;}
+    @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+    /* ─── TOAST ────────────────────────────────────── */
+    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(120px);background:var(--text);color:var(--bg);font-weight:600;font-size:0.85rem;padding:10px 18px;border-radius:999px;transition:transform 250ms cubic-bezier(.4,0,.2,1);z-index:500;white-space:nowrap;max-width:90vw;border:2.5px solid var(--text);box-shadow:4px 4px 0 var(--border-soft);}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    .toast .toast-icon{display:inline-block;vertical-align:middle;margin-right:6px;}
+    .toast .toast-icon svg{width:14px;height:14px;vertical-align:-2px;}
+
+    /* ─── SHORTCUT HINT ────────────────────────────── */
+    .shortcut-hint{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--card-bg);border:2.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem;box-shadow:var(--shadow-hover);font-size:0.8rem;color:var(--text2);z-index:400;display:none;min-width:220px;max-width:90vw;}
+    .shortcut-hint.show{display:block;animation:slideIn 200ms ease;}
+    @keyframes slideIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    .shortcut-hint h4{font-family:var(--font-display);font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.625rem;display:flex;align-items:center;gap:6px;}
+    .shortcut-hint h4 svg{width:16px;height:16px;}
+    .shortcut-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:4px 0;border-bottom:1px solid var(--border-soft);}
+    .shortcut-row:last-child{border-bottom:none;}
+    kbd{background:var(--bg2);border:1.5px solid var(--border-soft);border-radius:5px;padding:1px 6px;font-size:0.72rem;font-weight:600;font-family:var(--font-body);color:var(--text);font-variant-numeric:tabular-nums;}
+
+    /* ─── MODAL ────────────────────────────────────── */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:1rem;overflow-y:auto;backdrop-filter:blur(4px);}
+    .overlay.open{display:flex;animation:fadeIn 180ms ease;}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    .modal{background:var(--card-bg);border:3px solid var(--border);border-radius:18px;padding:1.5rem;width:100%;max-width:420px;box-shadow:6px 6px 0 var(--border);animation:popIn 220ms cubic-bezier(.34,1.56,.64,1);margin:auto;}
+    .modal.wide{max-width:480px;}
+    @keyframes popIn{from{transform:scale(0.92) translateY(8px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;}
+    .modal h2{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;display:flex;align-items:center;gap:8px;}
+    .modal h2 svg{width:22px;height:22px;color:var(--accent);}
+    .modal-close{background:transparent;border:none;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;cursor:pointer;color:var(--text2);transition:all var(--transition);}
+    .modal-close:hover{background:var(--bg2);color:var(--text);}
+    .modal-close svg{width:18px;height:18px;}
+
+    .field{margin-bottom:1rem;}
+    .field label{display:flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;}
+    .field input,.field select{width:100%;padding:10px 12px;font-family:var(--font-body);font-size:0.9rem;font-weight:500;background:var(--bg);border:2.5px solid var(--border-soft);border-radius:10px;color:var(--text);outline:none;transition:border-color var(--transition),box-shadow var(--transition);}
+    .field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+    .field input::placeholder{color:var(--text3);}
+
+    .emoji-grid{display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:var(--bg);border:2.5px solid var(--border-soft);border-radius:10px;max-height:140px;overflow-y:auto;}
+    .emoji-opt{width:36px;height:36px;border-radius:8px;border:2px solid transparent;background:transparent;font-size:1.1rem;cursor:pointer;display:grid;place-items:center;transition:all var(--transition);}
+    .emoji-opt:hover{background:rgba(0,0,0,0.05);transform:scale(1.1);}
+    .emoji-opt.selected{border-color:var(--accent);background:var(--accent-soft);}
+
+    .color-grid{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0;}
+    .color-opt{width:32px;height:32px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;transition:transform var(--transition),border-color var(--transition);position:relative;}
+    .color-opt:hover{transform:scale(1.12);}
+    .color-opt.selected{border-color:var(--text);transform:scale(1.12);}
+    .color-opt.selected::after{content:'';position:absolute;inset:6px;border-radius:50%;border:2px solid var(--text);}
+
+    .modal-actions{display:flex;gap:10px;margin-top:1.5rem;justify-content:flex-end;}
+    .btn-modal{font-family:var(--font-body);font-size:0.85rem;font-weight:600;padding:9px 18px;border-radius:10px;border:2.5px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;transition:transform var(--transition),box-shadow var(--transition);box-shadow:var(--shadow);display:inline-flex;align-items:center;gap:6px;}
+    .btn-modal:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow-hover);}
+    .btn-modal:active{transform:translate(1.5px,1.5px);box-shadow:var(--shadow-press);}
+    .btn-modal.primary{background:var(--accent);color:#fff;}
+    .btn-modal.danger{background:var(--danger);color:#fff;border-color:var(--border);}
+    .btn-modal:disabled{opacity:0.55;cursor:not-allowed;transform:none!important;box-shadow:var(--shadow)!important;}
+    .btn-modal svg{width:14px;height:14px;}
+
+    /* ─── BG SETTINGS ──────────────────────────────── */
+    .preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+    .preset-swatch{width:100%;aspect-ratio:1.4;border-radius:8px;border:2.5px solid var(--border-soft);cursor:pointer;transition:all var(--transition);position:relative;}
+    .preset-swatch:hover{border-color:var(--text);transform:translateY(-2px);}
+    .preset-swatch.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+    .bg-section-title{font-size:0.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.625rem;display:flex;align-items:center;gap:6px;}
+    .bg-section-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px;}
+
+    .upload-area{border:2.5px dashed var(--border-soft);border-radius:10px;padding:1.25rem;text-align:center;cursor:pointer;color:var(--text3);font-weight:600;font-size:0.85rem;transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:8px;}
+    .upload-area:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+    .upload-area svg{width:28px;height:28px;}
+
+    .tab-row{display:flex;gap:6px;margin-bottom:1rem;padding:4px;background:var(--bg);border-radius:10px;border:2.5px solid var(--border-soft);}
+    .tab-sm{flex:1;padding:6px 12px;border-radius:7px;border:none;background:transparent;color:var(--text2);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all var(--transition);display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+    .tab-sm:hover{color:var(--text);}
+    .tab-sm.active{background:var(--card-bg);color:var(--text);box-shadow:var(--shadow);}
+    .tab-sm svg{width:14px;height:14px;}
+
+    .range-wrap{display:flex;align-items:center;gap:12px;margin-top:6px;}
+    .range-wrap input[type=range]{flex:1;accent-color:var(--accent);height:6px;}
+    .range-value{font-family:var(--font-display);font-weight:600;font-size:0.9rem;color:var(--text);min-width:50px;text-align:right;font-variant-numeric:tabular-nums;}
+
+    /* ─── DARK MODE SPECIFICS ─────────────────────── */
+    @media(prefers-color-scheme:dark){
+      body.has-bg::after{background:rgba(0,0,0,0.55);}
+      .header{background:color-mix(in srgb, var(--bg) 90%, transparent);}
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────── */
+    @media(max-width:640px){
+      .header{padding:0.75rem 1rem;gap:0.5rem;}
+      .logo{font-size:1.15rem;}
+      .logo-mark{width:28px;height:28px;}
+      .clock-widget{display:none;}
+      .main{padding:1.25rem 1rem;}
+      .greeting h1{font-size:1.5rem;}
+      .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+      .preset-grid{grid-template-columns:repeat(3,1fr);}
+      .user-pill .email{display:none;}
+      .user-pill{padding:4px;}
+    }
+    @media(max-width:400px){
+      .grid{grid-template-columns:repeat(2,1fr);}
+    }
+
+    /* ─── SCROLLBAR ───────────────────────────────── */
+    .emoji-grid::-webkit-scrollbar{width:6px;}
+    .emoji-grid::-webkit-scrollbar-track{background:transparent;}
+    .emoji-grid::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px;}
+
+    /* ─── A11Y: SR only ──────────────────────────── */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
   </style>
 </head>
 <body>
-  <canvas id="gl-canvas" style="position:fixed;inset:0;z-index:1;pointer-events:none;width:100%;height:100%;"></canvas>
+  <canvas id="gl-canvas" style="position:fixed;inset:0;z-index:1;pointer-events:none;width:100%;height:100%;" aria-hidden="true"></canvas>
 
-  <header class="header">
-    <div class="logo">🚀 MyPortal</div>
+  <header class="header" role="banner">
+    <div class="logo" aria-label="MyPortal">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 12 2l9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </span>
+      <span>MyPortal</span>
+    </div>
     <div class="header-right">
-      <div class="clock-widget">
-        <div class="time" id="clock">--:--</div>
+      <div class="clock-widget" aria-live="off">
+        <div class="time" id="clock">--:--:--</div>
         <div class="date" id="date-display">---</div>
       </div>
-      <span class="user-email" id="user-email"></span>
-      <button class="hdr-btn" id="btn-focus" title="Mode Fokus (F)">🎯</button>
-      <button class="hdr-btn" id="btn-fullscreen" title="Fullscreen">⛶</button>
-      <button class="hdr-btn" id="btn-bg" title="Background (B)">🖼️</button>
-      <button class="hdr-btn" id="btn-io" title="Import/Export (E)">📦</button>
-      <button class="hdr-btn" id="btn-shortcuts" title="Shortcuts (?)">⌨️</button>
-      <button class="hdr-btn" id="btn-logout" title="Keluar">🚪</button>
+      <div class="user-pill" id="user-pill" title="">
+        <span class="avatar" id="user-avatar">?</span>
+        <span class="email" id="user-email"></span>
+      </div>
+      <button class="hdr-btn" id="btn-focus" title="Mode Fokus (F)" aria-label="Mode Fokus">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      </button>
+      <button class="hdr-btn" id="btn-fullscreen" title="Fullscreen" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 0 1 2-2h3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/></svg>
+      </button>
+      <button class="hdr-btn" id="btn-bg" title="Background (B)" aria-label="Ubah Background">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+      </button>
+      <button class="hdr-btn" id="btn-io" title="Import/Export (E)" aria-label="Import Export">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="hdr-btn" id="btn-shortcuts" title="Shortcuts (?)" aria-label="Lihat Shortcut">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M6 12h.01"/><path d="M18 12h.01"/><path d="M8 16h8"/></svg>
+      </button>
+      <button class="hdr-btn" id="btn-logout" title="Keluar" aria-label="Keluar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
     </div>
   </header>
 
-  <main class="main">
+  <main class="main" id="main">
     <div class="greeting">
       <h1 id="greeting">Halo!</h1>
-      <p id="greeting-sub">Mau buka apa hari ini? 🎉</p>
+      <p id="greeting-sub">Mau buka apa hari ini?</p>
     </div>
 
-    <div class="search-wrap">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input class="search-input" type="text" id="search" placeholder="Cari website... (/ untuk fokus)" autocomplete="off" />
+    <div class="search-wrap" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="search" id="search" placeholder="Cari website..." aria-label="Cari website" autocomplete="off" />
+      <span class="search-kbd" aria-hidden="true">/</span>
     </div>
 
-    <div class="tabs" id="tabs">
-      <button class="tab active" data-cat="semua">Semua</button>
-      <button class="tab" data-cat="kerja">💼 Kerja</button>
-      <button class="tab" data-cat="sosial">📱 Sosial</button>
-      <button class="tab" data-cat="hiburan">🎮 Hiburan</button>
-      <button class="tab" data-cat="referensi">📚 Referensi</button>
-      <button class="tab" data-cat="belanja">🛍️ Belanja</button>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Filter kategori">
+      <button class="tab active" role="tab" aria-selected="true" data-cat="semua"><span class="dot"></span>Semua <span class="count" data-count="semua">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="kerja"><span class="dot"></span>Kerja <span class="count" data-count="kerja">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="sosial"><span class="dot"></span>Sosial <span class="count" data-count="sosial">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="hiburan"><span class="dot"></span>Hiburan <span class="count" data-count="hiburan">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="referensi"><span class="dot"></span>Referensi <span class="count" data-count="referensi">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="belanja"><span class="dot"></span>Belanja <span class="count" data-count="belanja">0</span></button>
     </div>
 
-    <div class="count-label" id="count-label">Memuat...</div>
-    <div class="grid" id="grid"></div>
+    <div class="count-label" id="count-label" aria-live="polite">Memuat...</div>
+    <div class="grid" id="grid" role="list"></div>
   </main>
 
   <!-- MODAL: TAMBAH/EDIT -->
-  <div class="overlay" id="overlay-card">
+  <div class="overlay" id="overlay-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal">
-      <h2 id="modal-title">Tambah Website ✨</h2>
-      <div class="field">
-        <label>Nama Website</label>
-        <input type="text" id="inp-name" placeholder="contoh: YouTube" maxlength="30" />
+      <div class="modal-header">
+        <h2 id="modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Tambah Website</span>
+        </h2>
+        <button class="modal-close" onclick="closeOverlay('overlay-card')" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
-      <div class="field">
-        <label>URL</label>
-        <input type="url" id="inp-url" placeholder="https://..." />
-      </div>
-      <div class="field">
-        <label>Kategori</label>
-        <select id="inp-cat">
-          <option value="kerja">💼 Kerja</option>
-          <option value="sosial">📱 Sosial</option>
-          <option value="hiburan">🎮 Hiburan</option>
-          <option value="referensi">📚 Referensi</option>
-          <option value="belanja">🛍️ Belanja</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Ikon Emoji</label>
-        <div class="emoji-grid" id="emoji-grid"></div>
-      </div>
-      <div class="field">
-        <label>Warna Kartu</label>
-        <div class="color-grid" id="color-grid"></div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-modal" id="btn-cancel-card">Batal</button>
-        <button class="btn-modal primary" id="btn-save-card">Simpan 💾</button>
-      </div>
+      <form id="card-form" novalidate>
+        <div class="field">
+          <label for="inp-name">Nama Website</label>
+          <input type="text" id="inp-name" placeholder="contoh: YouTube" maxlength="30" required />
+        </div>
+        <div class="field">
+          <label for="inp-url">URL</label>
+          <input type="url" id="inp-url" placeholder="https://..." required />
+        </div>
+        <div class="field">
+          <label for="inp-cat">Kategori</label>
+          <select id="inp-cat">
+            <option value="kerja">Kerja</option>
+            <option value="sosial">Sosial</option>
+            <option value="hiburan">Hiburan</option>
+            <option value="referensi">Referensi</option>
+            <option value="belanja">Belanja</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ikon</label>
+          <div class="emoji-grid" id="emoji-grid" role="listbox" aria-label="Pilih ikon"></div>
+        </div>
+        <div class="field">
+          <label>Warna Kartu</label>
+          <div class="color-grid" id="color-grid" role="listbox" aria-label="Pilih warna"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal" id="btn-cancel-card">Batal</button>
+          <button type="submit" class="btn-modal primary" id="btn-save-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
   <!-- MODAL: BACKGROUND -->
-  <div class="overlay" id="overlay-bg">
-    <div class="modal" style="max-width:440px;">
-      <h2>Atur Background 🖼️</h2>
-      <div class="tab-row">
-        <button class="tab-sm active" id="tab-preset" onclick="switchBgTab('preset')">Preset</button>
-        <button class="tab-sm" id="tab-url" onclick="switchBgTab('url')">URL Gambar</button>
-        <button class="tab-sm" id="tab-auto" onclick="switchBgTab('auto')">🎲 Auto</button>
+  <div class="overlay" id="overlay-bg" role="dialog" aria-modal="true" aria-labelledby="bg-modal-title">
+    <div class="modal wide">
+      <div class="modal-header">
+        <h2 id="bg-modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          <span>Atur Background</span>
+        </h2>
+        <button class="modal-close" onclick="closeOverlay('overlay-bg')" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="tab-row" role="tablist">
+        <button class="tab-sm active" id="tab-preset" role="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Preset
+        </button>
+        <button class="tab-sm" id="tab-url" role="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          URL
+        </button>
+        <button class="tab-sm" id="tab-auto" role="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Auto
+        </button>
       </div>
       <div id="bg-panel-preset">
-        <div class="bg-section-title">Warna & Gradient</div>
-        <div class="preset-grid" id="preset-grid"></div>
-        <button class="btn-modal" style="margin-top:1rem;width:100%;background:#ff4444;border-color:#aa0000;color:#fff;" id="btn-reset-bg">Reset ke default</button>
+        <div class="bg-section-title">Warna &amp; Gradient</div>
+        <div class="preset-grid" id="preset-grid" role="listbox" aria-label="Pilih preset background"></div>
+        <button class="btn-modal" style="margin-top:1rem;width:100%;background:var(--danger);color:#fff;border-color:var(--border);" id="btn-reset-bg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset ke default
+        </button>
       </div>
       <div id="bg-panel-auto" style="display:none;">
         <div style="text-align:center;padding:0.5rem 0 1rem;">
-          <div style="font-size:1.75rem;margin-bottom:0.5rem;">🎲</div>
-          <div style="font-size:0.82rem;font-weight:600;color:var(--text2);margin-bottom:1.25rem;">
-            Background anime random dari Nekos.best
-          </div>
+          <div class="bg-section-title" style="justify-content:center;margin-bottom:0.75rem;">Background Anime Random</div>
+          <p style="font-size:0.82rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.5;">Gambar berganti otomatis dari <strong>Nekos.best</strong> sesuai interval.</p>
           <div class="field" style="text-align:left;margin-bottom:1rem;">
-            <label>Interval Ganti</label>
-            <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
-              <input type="range" id="auto-interval-slider" min="10" max="600" step="10" value="30"
-                style="flex:1;accent-color:var(--accent);"
-                oninput="updateIntervalLabel(this.value)" />
-              <span id="auto-interval-label" style="font-family:var(--font-mono);font-size:0.82rem;color:var(--text);min-width:50px;text-align:right;">30d</span>
+            <label for="auto-interval-slider">Interval Ganti</label>
+            <div class="range-wrap">
+              <input type="range" id="auto-interval-slider" min="10" max="600" step="10" value="30" oninput="updateIntervalLabel(this.value)" />
+              <span class="range-value" id="auto-interval-label">30d</span>
             </div>
           </div>
           <button class="btn-modal primary" id="btn-toggle-auto" onclick="toggleAutoMode()" style="width:100%;margin-bottom:0.75rem;">
-            ▶️ Aktifkan Auto Mode
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span id="auto-btn-text">Aktifkan Auto Mode</span>
           </button>
-          <div id="auto-status" style="font-size:0.75rem;color:var(--text3);min-height:18px;"></div>
+          <div id="auto-status" style="font-size:0.75rem;color:var(--text3);min-height:18px;font-weight:500;"></div>
         </div>
       </div>
       <div id="bg-panel-url" style="display:none;">
         <div class="field" style="margin-bottom:0.75rem;">
-          <label>URL Gambar</label>
+          <label for="inp-bg-url">URL Gambar</label>
           <input type="url" id="inp-bg-url" placeholder="https://..." />
         </div>
-        <button class="btn-modal primary" style="width:100%;" onclick="applyBgUrl()">Terapkan</button>
+        <button class="btn-modal primary" style="width:100%;" onclick="applyBgUrl()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Terapkan
+        </button>
       </div>
-      <div class="modal-actions" style="margin-top:1rem;">
+      <div class="modal-actions">
         <button class="btn-modal" onclick="closeOverlay('overlay-bg')">Tutup</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL: IMPORT/EXPORT -->
-  <div class="overlay" id="overlay-io">
+  <div class="overlay" id="overlay-io" role="dialog" aria-modal="true" aria-labelledby="io-modal-title">
     <div class="modal">
-      <h2>Import / Export 📦</h2>
+      <div class="modal-header">
+        <h2 id="io-modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Import / Export</span>
+        </h2>
+        <button class="modal-close" onclick="closeOverlay('overlay-io')" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
       <div class="bg-section-title">Export</div>
-      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.75rem;font-weight:600;">Simpan semua data portal ke file JSON.</p>
-      <button class="btn-modal primary" style="width:100%;" onclick="exportData()">⬇️ Download backup.json</button>
-      <div style="border-top:2px dashed var(--border);margin:1.25rem 0;"></div>
+      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.75rem;font-weight:500;line-height:1.5;">Simpan semua data portal ke file JSON.</p>
+      <button class="btn-modal primary" style="width:100%;" onclick="exportData()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download backup.json
+      </button>
+      <div style="border-top:2px dashed var(--border-soft);margin:1.25rem 0;"></div>
       <div class="bg-section-title">Import</div>
-      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.75rem;font-weight:600;">Data yang ada akan <strong>diganti</strong>.</p>
+      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.75rem;font-weight:500;line-height:1.5;">Data yang ada akan <strong>diganti</strong>.</p>
       <div class="upload-area" onclick="document.getElementById('json-input').click()">
-        📂 Pilih file backup.json
-        <input type="file" id="json-input" accept=".json" style="display:none;" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Pilih file backup.json</span>
+        <input type="file" id="json-input" accept=".json,application/json" style="display:none;" />
       </div>
       <div class="modal-actions">
         <button class="btn-modal" onclick="closeOverlay('overlay-io')">Tutup</button>
@@ -314,8 +491,11 @@
   </div>
 
   <!-- SHORTCUT HINT -->
-  <div class="shortcut-hint" id="shortcut-hint">
-    <h4>⌨️ Keyboard Shortcuts</h4>
+  <div class="shortcut-hint" id="shortcut-hint" role="dialog" aria-label="Keyboard shortcuts">
+    <h4>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M6 12h.01"/><path d="M18 12h.01"/><path d="M8 16h8"/></svg>
+      Keyboard Shortcuts
+    </h4>
     <div class="shortcut-row"><span>Cari</span><kbd>/</kbd></div>
     <div class="shortcut-row"><span>Tambah</span><kbd>N</kbd></div>
     <div class="shortcut-row"><span>Mode fokus</span><kbd>F</kbd></div>
@@ -325,12 +505,11 @@
     <div class="shortcut-row"><span>Tutup modal</span><kbd>Esc</kbd></div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-    // ⚠️ GANTI dengan kredensial Supabase kamu
     const SUPABASE_URL = 'https://pvqbjqjjwwcmzajldlzo.supabase.co'
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2cWJqcWpqd3djbXphamxkbHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNjk1NzksImV4cCI6MjA5NjY0NTU3OX0.3IeD44BUsjvlvRQU6lcfWysT5nyZxq9eZCNEZ2HN-WA'
 
@@ -340,25 +519,50 @@
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { window.location.href = './login.html'; }
     const user = session.user
-    document.getElementById('user-email').textContent = user.email
+    const userEmail = user.email || 'User'
+    const userInitial = (userEmail[0] || 'U').toUpperCase()
+
+    document.getElementById('user-email').textContent = userEmail
+    document.getElementById('user-avatar').textContent = userInitial
+    document.getElementById('user-pill').title = userEmail
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
+      if (!confirm('Yakin ingin keluar?')) return
       await supabase.auth.signOut()
       window.location.href = './login.html'
     })
 
+    // ─── ICONS (inline SVG strings) ──────────────────────────────────────────
+    const ICONS = {
+      work: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+      social: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+      entertainment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+      reference: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+      shopping: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',
+      edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+      trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+      alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    }
+
     // ─── CONSTANTS ───────────────────────────────────────────────────────────
-    const EMOJIS = ['🌐','📧','🎬','📸','🐦','🐙','📊','🎵','📖','🎥','☁️','🛒','🤖','💬','🗂️','📰','🎨','🔗','🏠','💡','🔍','🎯','📡','🧠','🎙️','🗃️']
-    const COLORS = ['#fff3e0','#fce4ec','#e8f5e9','#e3f2fd','#f3e5f5','#e0f2f1','#fff9c4','#fbe9e7','#ede7f6','#e1f5fe','#f9fbe7','#fff8e1']
-    const DARK_COLORS = ['#3d2a00','#3d0020','#003d10','#002a3d','#2a003d','#003d38','#3d3600','#3d1a00','#1a003d','#003040','#2d3d00','#3d3200']
+    const EMOJIS = ['🌐','📧','🎬','📸','🐦','🐙','📊','🎵','📖','🎥','☁️','🛒','🤖','💬','🗂️','📰','🎨','🔗','🏠','💡','🔍','🎯','📡','🧠','🎙️','🗃️','📁','📌']
+    const COLORS = ['#fff3e0','#fce4ec','#e8f5e9','#e3f2fd','#f3e5f5','#e0f2f1','#fff9c4','#fbe9e7','#ede7f6','#e1f5fe','#f9fbe7','#fff8e1','#f1f8e9','#fce4ec']
+    const DARK_COLORS = ['#3d2a00','#3d0020','#003d10','#002a3d','#2a003d','#003d38','#3d3600','#3d1a00','#1a003d','#003040','#2d3d00','#3d3200','#1a2a00','#3d0028']
     const PRESETS = [
-      {v:'none'},{v:'linear-gradient(135deg,#ff6b35,#ffc947)'},
-      {v:'linear-gradient(135deg,#0f2027,#203a43,#2c5364)'},
-      {v:'linear-gradient(135deg,#134e5e,#71b280)'},
-      {v:'linear-gradient(135deg,#0c0c2e,#1a1a5e,#2d1b69)'},
-      {v:'linear-gradient(135deg,#f093fb,#f5576c)'},
-      {v:'linear-gradient(135deg,#a8edea,#fed6e3)'},
-      {v:'linear-gradient(135deg,#2d3436,#6c5ce7)'},
+      {v:'none', label:'Default'},
+      {v:'linear-gradient(135deg,#ff5722,#ffc107)', label:'Sunset'},
+      {v:'linear-gradient(135deg,#0f2027,#203a43,#2c5364)', label:'Ocean'},
+      {v:'linear-gradient(135deg,#134e5e,#71b280)', label:'Forest'},
+      {v:'linear-gradient(135deg,#0c0c2e,#1a1a5e,#2d1b69)', label:'Space'},
+      {v:'linear-gradient(135deg,#f093fb,#f5576c)', label:'Berry'},
+      {v:'linear-gradient(135deg,#a8edea,#fed6e3)', label:'Mint'},
+      {v:'linear-gradient(135deg,#2d3436,#6c5ce7)', label:'Twilight'},
+      {v:'linear-gradient(135deg,#fad0c4,#ffd1ff)', label:'Candy'},
+      {v:'linear-gradient(135deg,#fbc2eb,#a6c1ee)', label:'Dream'},
+      {v:'linear-gradient(135deg,#ffecd2,#fcb69f)', label:'Peach'},
+      {v:'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)', label:'Midnight'},
     ]
 
     // ─── STATE ───────────────────────────────────────────────────────────────
@@ -370,6 +574,7 @@
     let dragSrcId = null
     let focusMode = false
     let saving = false
+    let searchQuery = ''
 
     // ─── SUPABASE CRUD ───────────────────────────────────────────────────────
     async function fetchApps() {
@@ -379,7 +584,7 @@
         .select('*')
         .eq('user_id', user.id)
         .order('sort_order', { ascending: true })
-      if (error) { showToast('❌ Gagal memuat data'); return; }
+      if (error) { showToast('Gagal memuat data', 'alert'); return; }
       apps = data || []
       render()
     }
@@ -392,19 +597,19 @@
         emoji: app.emoji, color: app.color,
         sort_order: maxOrder + 1,
       }).select().single()
-      if (error) { showToast('❌ Gagal menyimpan'); return null; }
+      if (error) { showToast('Gagal menyimpan', 'alert'); return null; }
       return data
     }
 
     async function updateApp(id, fields) {
       const { error } = await supabase.from('apps').update(fields).eq('id', id).eq('user_id', user.id)
-      if (error) { showToast('❌ Gagal mengupdate'); return false; }
+      if (error) { showToast('Gagal mengupdate', 'alert'); return false; }
       return true
     }
 
     async function deleteApp(id) {
       const { error } = await supabase.from('apps').delete().eq('id', id).eq('user_id', user.id)
-      if (error) { showToast('❌ Gagal menghapus'); return false; }
+      if (error) { showToast('Gagal menghapus', 'alert'); return false; }
       return true
     }
 
@@ -424,18 +629,15 @@
       if (!data) return
       if (data.bg_value) applyBgLocal(data.bg_value)
       if (data.bg_mode === 'auto') {
-        // Aktifkan auto mode
         const slider = document.getElementById('auto-interval-slider')
         const intervalMs = parseInt(slider.value) * 1000
         autoActive = true
-        document.getElementById('btn-toggle-auto').textContent = '⏹️ Nonaktifkan Auto Mode'
-        document.getElementById('btn-toggle-auto').style.background = '#22c55e'
+        updateAutoButton()
         slider.disabled = true
         fetchAnimeBg()
         autoTimer = setInterval(fetchAnimeBg, intervalMs)
       }
     }
-  
 
     function applyBgLocal(value) {
       if (!value || value === 'none') {
@@ -455,13 +657,14 @@
         bg_mode: mode,
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id' })
-      showToast('✅ Background diterapkan')
+      showToast('Background diterapkan', 'check')
     }
 
     async function applyBgUrl() {
       const url = document.getElementById('inp-bg-url').value.trim()
-      if (!url) { showToast('❌ URL kosong'); return; }
+      if (!url) { showToast('URL kosong', 'alert'); return; }
       await applyBg(`url("${url}")`, 'url')
+      closeOverlay('overlay-bg')
     }
 
     // ─── AUTO ANIME BG ───────────────────────────────────────────────────────
@@ -472,6 +675,11 @@
       const v = parseInt(val)
       const label = v < 60 ? `${v}d` : v < 3600 ? `${Math.round(v/60)}m` : `${Math.round(v/3600)}j`
       document.getElementById('auto-interval-label').textContent = label
+    }
+
+    function updateAutoButton() {
+      const btn = document.getElementById('auto-btn-text')
+      btn.textContent = autoActive ? 'Nonaktifkan Auto Mode' : 'Aktifkan Auto Mode'
     }
 
     async function fetchAnimeBg() {
@@ -488,46 +696,45 @@
             bg_mode: 'auto',
             updated_at: new Date().toISOString()
           }, { onConflict: 'user_id' })
-          document.getElementById('auto-status').textContent = `🖼️ Diperbarui ${new Date().toLocaleTimeString('id-ID')}`
+          document.getElementById('auto-status').textContent = `Diperbarui ${new Date().toLocaleTimeString('id-ID')}`
         }
       } catch {
-        document.getElementById('auto-status').textContent = '❌ Gagal ambil gambar'
+        document.getElementById('auto-status').textContent = 'Gagal ambil gambar'
       }
     }
 
     function toggleAutoMode() {
-      const btn = document.getElementById('btn-toggle-auto')
       const slider = document.getElementById('auto-interval-slider')
       if (autoActive) {
-        // Matikan
         clearInterval(autoTimer)
         autoTimer = null
         autoActive = false
-        btn.textContent = '▶️ Aktifkan Auto Mode'
-        btn.style.background = ''
-        document.getElementById('auto-status').textContent = '⏹️ Auto mode nonaktif'
+        updateAutoButton()
+        document.getElementById('auto-status').textContent = 'Auto mode nonaktif'
         slider.disabled = false
-        // Reset bg ke saved
         loadBg()
       } else {
-        // Aktifkan
         autoActive = true
-        btn.textContent = '⏹️ Nonaktifkan Auto Mode'
-        btn.style.background = '#22c55e'
+        updateAutoButton()
         slider.disabled = true
         const intervalMs = parseInt(slider.value) * 1000
         fetchAnimeBg()
         autoTimer = setInterval(fetchAnimeBg, intervalMs)
-        document.getElementById('auto-status').textContent = `✅ Aktif · ganti tiap ${slider.value}d`
+        document.getElementById('auto-status').textContent = `Aktif · ganti tiap ${slider.value}d`
       }
     }
 
     function buildPresetGrid() {
       const pg = document.getElementById('preset-grid')
-      pg.innerHTML = PRESETS.map(p => `
-        <div class="preset-swatch" style="background:${p.v==='none'?'var(--bg)':p.v};border:2.5px solid var(--border);"
-          onclick="applyBg('${p.v}')"></div>
-      `).join('')
+      const current = getComputedStyle(document.documentElement).getPropertyValue('--custom-bg').trim()
+      pg.innerHTML = PRESETS.map(p => {
+        const isSelected = (p.v === 'none' && !document.body.classList.contains('has-bg')) || (p.v && p.v === current)
+        return `<div class="preset-swatch${isSelected ? ' selected' : ''}" style="background:${p.v==='none'?'var(--bg)':p.v};" role="option" tabindex="0" data-value="${p.v}" title="${p.label}" aria-label="${p.label}"></div>`
+      }).join('')
+      pg.querySelectorAll('.preset-swatch').forEach(sw => {
+        sw.addEventListener('click', () => applyBg(sw.dataset.value))
+        sw.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyBg(sw.dataset.value) } })
+      })
     }
 
     let bgTab = 'preset'
@@ -551,20 +758,23 @@
       const days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu']
       const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']
       document.getElementById('date-display').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`
-      const greetings=[[5,'Selamat pagi! ☀️'],[12,'Selamat siang! 🌤️'],[15,'Selamat sore! 🌇'],[19,'Selamat malam! 🌙'],[24,'Masih melek nih? 🌙']]
+      const greetings=[[5,'Selamat pagi'],[12,'Selamat siang'],[15,'Selamat sore'],[19,'Selamat malam'],[24,'Masih melek nih']]
       const hr = now.getHours()
       let gr = greetings[greetings.length-1][1]
       for (const [lim,txt] of greetings) { if (hr < lim) { gr = txt; break; } }
-      document.getElementById('greeting').textContent = gr
+      document.getElementById('greeting').textContent = `${gr}, ${userInitial === 'U' ? 'teman' : userEmail.split('@')[0]}`
     }
     updateClock(); setInterval(updateClock, 1000)
 
     // ─── TOAST ───────────────────────────────────────────────────────────────
     let toastTimer
-    function showToast(msg) {
+    function showToast(msg, kind = 'check') {
       const t = document.getElementById('toast')
-      t.textContent = msg; t.classList.add('show')
-      clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2500)
+      const icon = ICONS[kind] || ICONS.check
+      t.innerHTML = `<span class="toast-icon">${icon}</span>${msg}`
+      t.classList.add('show')
+      clearTimeout(toastTimer)
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000)
     }
 
     // ─── FAVICON ─────────────────────────────────────────────────────────────
@@ -577,46 +787,96 @@
 
     // ─── RENDER ──────────────────────────────────────────────────────────────
     function isDark() { return window.matchMedia('(prefers-color-scheme:dark)').matches }
-    function getCardColor(i) { return isDark() ? DARK_COLORS[i] : COLORS[i] }
-    function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+    function getCardColor(i) { return isDark() ? DARK_COLORS[i % DARK_COLORS.length] : COLORS[i % COLORS.length] }
+    function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+    function updateTabCounts() {
+      const counts = { semua: apps.length }
+      apps.forEach(a => { counts[a.cat] = (counts[a.cat] || 0) + 1 })
+      document.querySelectorAll('[data-count]').forEach(el => {
+        el.textContent = counts[el.dataset.count] || 0
+      })
+    }
 
     function renderSkeleton() {
       const grid = document.getElementById('grid')
       grid.innerHTML = Array(6).fill(0).map(() => `
-        <div class="skeleton">
-          <div class="skel-box" style="width:44px;height:44px;border-radius:10px"></div>
+        <div class="skeleton" aria-hidden="true">
+          <div class="skel-box" style="width:42px;height:42px;border-radius:10px"></div>
           <div class="skel-box" style="width:70%;height:14px;border-radius:6px"></div>
           <div class="skel-box" style="width:90%;height:11px;border-radius:6px"></div>
         </div>`).join('')
       document.getElementById('count-label').textContent = 'Memuat...'
     }
 
-    function render() {
-      const q = document.getElementById('search').value.toLowerCase().trim()
-      const filtered = apps.filter(a => {
+    function getFiltered() {
+      const q = searchQuery.toLowerCase()
+      return apps.filter(a => {
         const matchCat = currentCat === 'semua' || a.cat === currentCat
         const matchQ = !q || a.name.toLowerCase().includes(q) || a.url.toLowerCase().includes(q)
         return matchCat && matchQ
       })
-      document.getElementById('count-label').textContent = `${filtered.length} website`
+    }
 
-      let html = filtered.map(a => `
-        <div class="card" draggable="true" data-id="${a.id}"
-          style="background:${getCardColor(a.color)}"
-          onclick="openSite('${escHtml(a.url)}')">
-          <div class="card-actions" onclick="event.stopPropagation()">
-            <button class="card-btn" onclick="openModalCard('${a.id}')">✏️</button>
-            <button class="card-btn del" onclick="handleDelete('${a.id}')">🗑️</button>
+    function renderEmpty(query) {
+      const isSearch = !!query
+      return `
+        <div class="empty-state">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </div>
-          <div class="card-icon" style="background:rgba(255,255,255,0.35)">${a.emoji}</div>
-          <div>
-            <div class="card-name">${escHtml(a.name)}</div>
-            <div class="card-url">${a.url.replace(/^https?:\/\//,'')}</div>
-          </div>
-          <div class="drag-handle">⠿⠿</div>
-        </div>`).join('')
-      html += `<div class="add-card" onclick="openModalCard()"><div class="plus">＋</div><span>Tambah website</span></div>`
+          <h3>${isSearch ? 'Tidak ditemukan' : 'Belum ada website'}</h3>
+          <p>${isSearch ? 'Coba kata kunci lain' : 'Tambah website pertamamu dengan tekan <strong>N</strong>'}</p>
+        </div>`
+    }
+
+    function render() {
+      updateTabCounts()
+      const filtered = getFiltered()
       const grid = document.getElementById('grid')
+      const countLabel = document.getElementById('count-label')
+
+      const total = filtered.length
+      const q = searchQuery
+      if (q) {
+        countLabel.textContent = `${total} hasil untuk "${q}"`
+      } else {
+        countLabel.textContent = `${total} website${currentCat !== 'semua' ? ' di kategori ini' : ''}`
+      }
+
+      let html = ''
+      if (total === 0) {
+        html = renderEmpty(q)
+      } else {
+        html = filtered.map(a => {
+          const favicon = getFaviconUrl(a.url)
+          const initial = escHtml((a.name || '?')[0].toUpperCase())
+          return `
+        <div class="card" draggable="true" data-id="${a.id}" role="listitem" tabindex="0"
+          style="background:${getCardColor(a.color)}"
+          onclick="openSite('${escHtml(a.url)}')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSite('${escHtml(a.url)}')}">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">
+              <img src="${favicon}" alt="" loading="lazy" onerror="this.outerHTML='<span class=placeholder>${initial}</span>'" />
+            </div>
+            <div class="card-actions" onclick="event.stopPropagation()">
+              <button class="card-btn" onclick="openModalCard('${a.id}')" aria-label="Edit ${escHtml(a.name)}" title="Edit">${ICONS.edit}</button>
+              <button class="card-btn del" onclick="handleDelete('${a.id}','${escHtml(a.name)}')" aria-label="Hapus ${escHtml(a.name)}" title="Hapus">${ICONS.trash}</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">${escHtml(a.name)}</div>
+            <div class="card-url">${escHtml(a.url.replace(/^https?:\/\//,''))}</div>
+          </div>
+          <div class="drag-handle" aria-hidden="true">⠿</div>
+        </div>`
+        }).join('')
+      }
+      html += `<button class="add-card" type="button" onclick="openModalCard()" aria-label="Tambah website baru">
+        <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        <span>Tambah website</span>
+      </button>`
       grid.innerHTML = html
 
       grid.querySelectorAll('.card[draggable]').forEach(card => {
@@ -630,10 +890,10 @@
 
     function openSite(url) { window.open(url, '_blank', 'noopener,noreferrer') }
 
-    async function handleDelete(id) {
-      if (!confirm('Hapus website ini?')) return
+    async function handleDelete(id, name) {
+      if (!confirm(`Hapus "${name}"?`)) return
       const ok = await deleteApp(id)
-      if (ok) { apps = apps.filter(a => a.id !== id); render(); showToast('🗑️ Website dihapus') }
+      if (ok) { apps = apps.filter(a => a.id !== id); render(); showToast(`${name} dihapus`, 'trash') }
     }
 
     // ─── DRAG & DROP ─────────────────────────────────────────────────────────
@@ -649,38 +909,49 @@
       const [moved] = apps.splice(si, 1); apps.splice(ti, 0, moved)
       render()
       await reorderApps(apps.map(a => a.id))
-      showToast('✅ Urutan disimpan')
+      showToast('Urutan disimpan', 'check')
     }
     function onDragEnd() { document.querySelectorAll('.card').forEach(c => c.classList.remove('dragging','drag-over')); dragSrcId = null; }
 
     // ─── TABS & SEARCH ───────────────────────────────────────────────────────
     document.getElementById('tabs').addEventListener('click', e => {
       const tab = e.target.closest('.tab'); if (!tab) return
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
-      tab.classList.add('active'); currentCat = tab.dataset.cat; render()
+      document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false') })
+      tab.classList.add('active'); tab.setAttribute('aria-selected','true')
+      currentCat = tab.dataset.cat; render()
     })
-    document.getElementById('search').addEventListener('input', render)
+
+    const searchInput = document.getElementById('search')
+    searchInput.addEventListener('input', e => { searchQuery = e.target.value; render() })
 
     // ─── MODAL CARD ──────────────────────────────────────────────────────────
     function buildEmojiGrid() {
       document.getElementById('emoji-grid').innerHTML = EMOJIS.map((em,i) =>
-        `<div class="emoji-opt${i===selEmoji?' selected':''}" onclick="selEmojiClick(${i})">${em}</div>`
+        `<div class="emoji-opt${i===selEmoji?' selected':''}" role="option" tabindex="0" data-i="${i}" aria-label="Emoji ${em}">${em}</div>`
       ).join('')
+      document.querySelectorAll('#emoji-grid .emoji-opt').forEach(el => {
+        el.addEventListener('click', () => { selEmoji = +el.dataset.i; buildEmojiGrid() })
+        el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selEmoji = +el.dataset.i; buildEmojiGrid() } })
+      })
     }
+
     function buildColorGrid() {
       const cols = isDark() ? DARK_COLORS : COLORS
       document.getElementById('color-grid').innerHTML = cols.map((c,i) =>
-        `<div class="color-opt${i===selColor?' selected':''}" style="background:${c}" onclick="selColorClick(${i})"></div>`
+        `<div class="color-opt${i===selColor?' selected':''}" role="option" tabindex="0" data-i="${i}" style="background:${c}" aria-label="Warna ${i+1}"></div>`
       ).join('')
+      document.querySelectorAll('#color-grid .color-opt').forEach(el => {
+        el.addEventListener('click', () => { selColor = +el.dataset.i; buildColorGrid() })
+        el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selColor = +el.dataset.i; buildColorGrid() } })
+      })
     }
-    window.selEmojiClick = i => { selEmoji = i; buildEmojiGrid(); }
-    window.selColorClick = i => { selColor = i; buildColorGrid(); }
 
     function openModalCard(id) {
       editingId = id || null
-      document.getElementById('modal-title').textContent = id ? 'Edit Website ✏️' : 'Tambah Website ✨'
+      document.querySelector('#overlay-card #modal-title span').textContent = id ? 'Edit Website' : 'Tambah Website'
       if (id) {
         const a = apps.find(x => x.id === id)
+        if (!a) return
         document.getElementById('inp-name').value = a.name
         document.getElementById('inp-url').value = a.url
         document.getElementById('inp-cat').value = a.cat
@@ -689,8 +960,8 @@
       } else {
         document.getElementById('inp-name').value = ''
         document.getElementById('inp-url').value = ''
-        document.getElementById('inp-cat').value = 'kerja'
-        selEmoji = 0; selColor = 0
+        document.getElementById('inp-cat').value = currentCat !== 'semua' ? currentCat : 'kerja'
+        selEmoji = 0; selColor = Math.floor(Math.random() * COLORS.length)
       }
       buildEmojiGrid(); buildColorGrid()
       openOverlay('overlay-card')
@@ -702,28 +973,31 @@
       let name = document.getElementById('inp-name').value.trim()
       let url = document.getElementById('inp-url').value.trim()
       let cat = document.getElementById('inp-cat').value
-      if (!name) { document.getElementById('inp-name').focus(); return; }
-      if (!url) { document.getElementById('inp-url').focus(); return; }
+      if (!name) { document.getElementById('inp-name').focus(); showToast('Nama wajib diisi', 'alert'); return; }
+      if (!url) { document.getElementById('inp-url').focus(); showToast('URL wajib diisi', 'alert'); return; }
       if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+      try { new URL(url) } catch { showToast('URL tidak valid', 'alert'); return }
 
       saving = true
       const btn = document.getElementById('btn-save-card')
       btn.disabled = true; btn.textContent = 'Menyimpan...'
+      const originalHtml = btn.innerHTML
+      btn.innerHTML = 'Menyimpan...'
 
       if (editingId) {
         const fields = { name, url, cat, emoji: EMOJIS[selEmoji], color: selColor }
         const ok = await updateApp(editingId, fields)
-        if (ok) { const a = apps.find(x => x.id === editingId); Object.assign(a, fields); showToast('✅ Website diperbarui') }
+        if (ok) { const a = apps.find(x => x.id === editingId); Object.assign(a, fields); showToast('Website diperbarui', 'check') }
       } else {
         const newApp = await insertApp({ name, url, cat, emoji: EMOJIS[selEmoji], color: selColor })
-        if (newApp) { apps.push(newApp); showToast('✅ Website ditambahkan') }
+        if (newApp) { apps.push(newApp); showToast('Website ditambahkan', 'check') }
       }
 
-      saving = false; btn.disabled = false; btn.textContent = 'Simpan 💾'
+      saving = false; btn.disabled = false; btn.innerHTML = originalHtml
       closeOverlay('overlay-card'); render()
     }
 
-    document.getElementById('btn-save-card').addEventListener('click', saveCard)
+    document.getElementById('card-form').addEventListener('submit', e => { e.preventDefault(); saveCard() })
     document.getElementById('btn-cancel-card').addEventListener('click', () => closeOverlay('overlay-card'))
 
     // ─── IMPORT / EXPORT ─────────────────────────────────────────────────────
@@ -734,7 +1008,7 @@
       a.href = URL.createObjectURL(blob)
       a.download = `myportal-backup-${new Date().toISOString().slice(0,10)}.json`
       a.click()
-      showToast('⬇️ File backup didownload')
+      showToast('File backup didownload', 'check')
     }
 
     document.getElementById('json-input').addEventListener('change', e => {
@@ -747,10 +1021,8 @@
           if (!imported.length) throw new Error('kosong')
           if (!confirm(`Import ${imported.length} website? Data sekarang akan diganti.`)) return
 
-          // Hapus semua data lama
           await supabase.from('apps').delete().eq('user_id', user.id)
 
-          // Insert data baru
           const toInsert = imported.map((a, idx) => ({
             user_id: user.id, name: a.name, url: a.url,
             cat: a.cat || 'kerja', emoji: a.emoji || '🌐',
@@ -759,62 +1031,79 @@
           const { data: inserted } = await supabase.from('apps').insert(toInsert).select()
           apps = inserted || []
           render(); closeOverlay('overlay-io')
-          showToast(`✅ ${apps.length} website berhasil diimport`)
-        } catch { showToast('❌ File tidak valid') }
+          showToast(`${apps.length} website berhasil diimport`, 'check')
+        } catch { showToast('File tidak valid', 'alert') }
       }
       reader.readAsText(file)
     })
 
     // ─── FULLSCREEN & FOCUS ──────────────────────────────────────────────────
     document.getElementById('btn-fullscreen').addEventListener('click', () => {
-      if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(() => {}) }
-      else { document.exitFullscreen() }
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen?.().catch(() => {}) }
+      else { document.exitFullscreen?.() }
     })
     document.getElementById('btn-focus').addEventListener('click', () => {
       focusMode = !focusMode
       document.body.classList.toggle('focus-mode', focusMode)
-      document.getElementById('btn-focus').textContent = focusMode ? '👁️' : '🎯'
-      showToast(focusMode ? '🎯 Mode fokus aktif' : '👁️ Mode fokus nonaktif')
+      showToast(focusMode ? 'Mode fokus aktif' : 'Mode fokus nonaktif', 'check')
     })
 
     // ─── OVERLAY HELPERS ─────────────────────────────────────────────────────
-    function openOverlay(id) { document.getElementById(id).classList.add('open') }
-    function closeOverlay(id) { document.getElementById(id).classList.remove('open') }
+    let lastFocused = null
+    function openOverlay(id) {
+      lastFocused = document.activeElement
+      const el = document.getElementById(id)
+      el.classList.add('open')
+      document.body.style.overflow = 'hidden'
+    }
+    function closeOverlay(id) {
+      document.getElementById(id).classList.remove('open')
+      const anyOpen = [...document.querySelectorAll('.overlay.open')].length > 0
+      if (!anyOpen) document.body.style.overflow = ''
+      if (lastFocused && lastFocused.focus) lastFocused.focus()
+    }
 
     document.getElementById('btn-bg').addEventListener('click', () => { buildPresetGrid(); switchBgTab('preset'); openOverlay('overlay-bg') })
     document.getElementById('btn-io').addEventListener('click', () => openOverlay('overlay-io'))
     document.querySelectorAll('.overlay').forEach(ov => {
-      ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open') })
+      ov.addEventListener('click', e => { if (e.target === ov) closeOverlay(ov.id) })
     })
+
+    document.getElementById('tab-preset').addEventListener('click', () => switchBgTab('preset'))
+    document.getElementById('tab-url').addEventListener('click', () => switchBgTab('url'))
+    document.getElementById('tab-auto').addEventListener('click', () => switchBgTab('auto'))
 
     // ─── SHORTCUTS ───────────────────────────────────────────────────────────
     let shortcutVisible = false
-    document.getElementById('btn-shortcuts').addEventListener('click', () => {
+    function toggleShortcuts() {
       shortcutVisible = !shortcutVisible
       document.getElementById('shortcut-hint').classList.toggle('show', shortcutVisible)
-    })
+    }
+    document.getElementById('btn-shortcuts').addEventListener('click', toggleShortcuts)
 
     document.addEventListener('keydown', e => {
       const inInput = ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)
       const anyOpen = [...document.querySelectorAll('.overlay.open')].length > 0
       if (e.key === 'Escape') {
-        document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open'))
-        shortcutVisible = false; document.getElementById('shortcut-hint').classList.remove('show')
+        if (anyOpen) {
+          document.querySelectorAll('.overlay.open').forEach(o => closeOverlay(o.id))
+        }
+        if (shortcutVisible) {
+          shortcutVisible = false
+          document.getElementById('shortcut-hint').classList.remove('show')
+        }
         return
       }
       if (e.key === 'Enter' && document.getElementById('overlay-card').classList.contains('open')) {
         e.preventDefault(); saveCard(); return
       }
       if (anyOpen || inInput) return
-      if (e.key === '/') { e.preventDefault(); document.getElementById('search').focus(); return; }
-      if (e.key === 'n' || e.key === 'N') { openModalCard(); return; }
-      if (e.key === 'f' || e.key === 'F') { document.getElementById('btn-focus').click(); return; }
-      if (e.key === 'b' || e.key === 'B') { buildPresetGrid(); switchBgTab('preset'); openOverlay('overlay-bg'); return; }
-      if (e.key === 'e' || e.key === 'E') { openOverlay('overlay-io'); return; }
-      if (e.key === '?') {
-        shortcutVisible = !shortcutVisible
-        document.getElementById('shortcut-hint').classList.toggle('show', shortcutVisible)
-      }
+      if (e.key === '/') { e.preventDefault(); searchInput.focus(); searchInput.select(); return; }
+      if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openModalCard(); return; }
+      if (e.key === 'f' || e.key === 'F') { e.preventDefault(); document.getElementById('btn-focus').click(); return; }
+      if (e.key === 'b' || e.key === 'B') { e.preventDefault(); buildPresetGrid(); switchBgTab('preset'); openOverlay('overlay-bg'); return; }
+      if (e.key === 'e' || e.key === 'E') { e.preventDefault(); openOverlay('overlay-io'); return; }
+      if (e.key === '?') { e.preventDefault(); toggleShortcuts() }
     })
 
     // expose globals
@@ -829,10 +1118,13 @@
     window.toggleAutoMode = toggleAutoMode
     window.updateIntervalLabel = updateIntervalLabel
 
-    window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', render)
+    window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => {
+      buildColorGrid()
+      render()
+    })
 
     // ─── INIT ────────────────────────────────────────────────────────────────
-    document.getElementById('greeting-sub').textContent = `Login sebagai ${user.email} 👋`
+    document.getElementById('greeting-sub').textContent = `Login sebagai ${userEmail}`
     fetchApps()
     loadBg()
   </script>
